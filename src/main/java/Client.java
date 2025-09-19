@@ -1,6 +1,7 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class Client {
-    List<String> like;
-    List<String> noLike;
+    public ArrayList<String> like = new ArrayList<String>();
+    public ArrayList<String> noLike = new ArrayList<String>();
 }
