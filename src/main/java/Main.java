@@ -1,32 +1,19 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
-        ArrayList<Client> list = new ArrayList<>();
+        //ArrayList<Client> list = new ArrayList<>();
         Map<String, Integer> globalLike = new HashMap<>();
         Map<String, Integer> globalNoLike = new HashMap<>();
 
         Map<String, Integer> result = new HashMap<>();
 
-        list.add(new Client());
-        list.get(0).like.add("cheese");
-        list.get(0).like.add("peppers");
-
-        list.add(new Client());
-        list.get(1).like.add("basil");
-        list.get(1).noLike.add("pineapple");
-
-        list.add(new Client());
-        list.get(2).like.add("mushrooms");
-        list.get(2).like.add("tomatoes");
-        list.get(2).noLike.add("basil");
-
-        for (Client c : list) {
-            System.out.println(c.like.toString());
-            System.out.println(c.noLike.toString());
-        }
+        ArrayList<Client> list = parseClientsFromFile("src\\main\\resources\\text2.txt");
 
         for (Client c : list) {
             for (String s : c.like) {
@@ -37,9 +24,11 @@ public class Main {
             }
         }
 
+        System.out.println("--- Like ---");
         for (String s : globalLike.keySet()) {
             System.out.println("Like: " + s + " " + globalLike.get(s));
         }
+        System.out.println("--- No Like ---");
         for (String s : globalNoLike.keySet()) {
             System.out.println("NoLike: " + s + " " + globalNoLike.get(s));
         }
@@ -52,8 +41,46 @@ public class Main {
             }
         }
 
+        System.out.println("--- RESULTS ---");
         for (String res : result.keySet()) {
             System.out.println("Result: " + res + " " + result.get(res));
         }
+    }
+
+    public static ArrayList<Client> parseClientsFromFile(String filePath) {
+        ArrayList<Client> clients = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            br.readLine();
+            while ((line = br.readLine()) != null) {
+                Client c = new Client();
+
+                // Like
+                String[] likeParts = line.trim().split(" ");
+                int likeCount = Integer.parseInt(likeParts[0]);
+                for (int i = 1; i <= likeCount; i++) {
+                    if (i < likeParts.length) {
+                        c.like.add(likeParts[i]);
+                    }
+                }
+
+                // No like
+                line = br.readLine();
+                if (line != null) {
+                    String[] noLikeParts = line.trim().split(" ");
+                    int noLikeCount = Integer.parseInt(noLikeParts[0]);
+                    for (int i = 1; i <= noLikeCount; i++) {
+                        if (i < noLikeParts.length) {
+                            c.noLike.add(noLikeParts[i]);
+                        }
+                    }
+                }
+
+                clients.add(c);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return clients;
     }
 }
